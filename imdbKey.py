@@ -4,18 +4,23 @@ import json
 import re
 import sys,os, urllib, urllib2, time, random, cookielib
 from bs4 import BeautifulSoup
+import string, time
 
 
 
 # write movielist to json
-def movie2json(movName,movId,movDate):
+def movie2json(movName,movId,movDate,i):
     data = {
-        'movName':movName,
-        'movId':movId,
-        'movDate':movDate,
-    }
-    json_str = json.dumps(data)
-    return json_str
+                'movName':movName,
+                'movId':movId,
+                'movDate':movDate,
+            }
+    local=time.strftime('%U_%y',time.localtime(time.time()))
+    jsonwritefile='file/'+local+'_'+str(i)+'.json'
+    with open(jsonwritefile, 'a+') as f:
+        json.dump(data, f)
+    # json_str = json.dumps(data)
+    # return json_str
 
 def get_movList():
     # url='http://www.imdb.com/calendar/?ref_=nv_mv_cal_5'
@@ -30,17 +35,32 @@ def get_movList():
     soup=BeautifulSoup(data,'html.parser')
     main=soup.find(id="main")
 
-    for item in main.find_all('h4'):
-        print item
-        print item.next_sibling()
-        
+    idList=[]
+    movDateList=[]
+    cont=[]
 
-    # with open('data.txt', 'a') as f:
-    #     f.write(main.contents)
+    patternh4=re.compile(r'\<h4\>.+?\<\/h4\>')
+    patterna=re.compile(r'\<a.+?\<\/a\>')
 
+    length= len(main.contents)
+    for i in range(length):
+        h4= BeautifulSoup(str(main.contents[i]),'html.parser').find('h4')
+        a=BeautifulSoup(str(main.contents[i]),'html.parser').find_all('a')
+        if h4:
+            print h4.contents
+            movDate=h4.contents[0]
+            i=0
+        if a:
+            for item in a:
+                movId= item['href']
 
-
-
+                if movId in idList:
+                    pass
+                else:
+                    idList.append(movId)
+                    i=idList.index(movId)
+                    movName= item.contents[0]
+                    movie2json(movName,movId,movDate,i)
 
 def main():
     get_movList()
