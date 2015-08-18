@@ -14,7 +14,7 @@ DEVELOPER_KEY = "AIzaSyBl7nxzkjSusSb-bqnQXHHkIEZ4LJNOyTg"
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
 
-keyword=[u'Max Steel', u'13 Ghosts', u'6 Years', u'Ejecta']
+keyword=['13 Ghosts','6 Years', 'Ejecta']
 local=time.strftime('%U_%y',time.localtime(time.time()))
 listfile=local+'_list.txt'
 
@@ -47,32 +47,37 @@ def youtube_search(options):
             playlists.append("%s (%s)" % (search_result["snippet"]["title"],
             search_result["id"]["playlistId"]))
     
-    # with open(listfile,'a') as f:
-    #     for video in videos:
-    #         f.write(video+'\n')
-    #     for channel in channels:
-    #         f.write(channel+'\n')
-    #     for playlist in playlists:
-    #         f.write(playlist+'\n')
+    with open(listfile,'a') as f:
+        for video in videos:
+            print video
+            f.write(video+'\n')
+        for channel in channels:
+            print channel
+            f.write(channel+'\n')
+        for playlist in playlists:
+            print playlis
+            f.write(playlist+'\n')
 
-    print "Videos:\n", "\n".join(videos), "\n"
-    print "Channels:\n", "\n".join(channels), "\n"
-    print "Playlists:\n", "\n".join(playlists), "\n"
+    # print "Videos:\n", "\n".join(videos), "\n"
+    # print "Channels:\n", "\n".join(channels), "\n"
+    # print "Playlists:\n", "\n".join(playlists), "\n"
 
 
 def search_byterm(keyword):
-    # for word in keyword:
-    # key='\"'+str(word)+'\"'
-    search_term='"Ejecta"'+'"movie review" "vlog"'
-    argparser.add_argument("--q", help="Search term", default=search_term)
-    argparser.add_argument("--max-results", help="Max results", default=50)
-    argparser.add_argument("--order", help="Order", default='Date')
-    args = argparser.parse_args()
+    for word in keyword:
+        key='\"'+str(word)+'\"'
+        search_term=key+'"movie review" "vlog"'
+        print search_term
+        argparser.__init__()
+        argparser.add_argument("--q", help="Search term", default=search_term)
+        argparser.add_argument("--max-results", help="Max results", default=50)
+        argparser.add_argument("--order", help="Order", default='Date')
+        args = argparser.parse_args()
 
-    try:
-        youtube_search(args)
-    except HttpError, e:
-        print "An HTTP error %d occurred:\n%s" % (e.resp.status, e.content)
+        try:
+            youtube_search(args)
+        except HttpError, e:
+            print "An HTTP error %d occurred:\n%s" % (e.resp.status, e.content)
 
 if __name__ == '__main__':
     # main()
